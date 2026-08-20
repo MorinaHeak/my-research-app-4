@@ -38,7 +38,8 @@ export default function Home() {
       4. សំណួរស្រាវជ្រាវ (Research Questions)
       5. វិធីសាស្ត្រស្រាវជ្រាវ (Research Methodology)`;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+      // កែសម្រួល Endpoint មកប្រើ gemini-2.5-flash
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
