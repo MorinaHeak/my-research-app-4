@@ -160,7 +160,7 @@ export default function Home() {
             <p className="text-xs text-slate-500 mb-4">ស្កែន KHQR ដើម្បីទទួលបាន 10 ក្រេឌីត ត្រឹមតែ $1.00 ប៉ុណ្ណោះ!</p>
             <div className="bg-slate-50 p-4 rounded-xl border flex flex-col items-center mb-4">
               <img src="/QR_Morina.jpg" alt="ABA KHQR" className="max-w-[200px] rounded-lg shadow-md" />
-              <span class="text-sm font-bold text-indigo-600 mt-2">$1.00 = 10 ក្រេឌីត</span>
+              <span className="text-sm font-bold text-indigo-600 mt-2">$1.00 = 10 ក្រេឌីត</span>
             </div>
             <div className="space-y-3">
               <input
