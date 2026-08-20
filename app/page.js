@@ -15,7 +15,7 @@ export default function Home() {
   const TELEGRAM_BOT_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
   const TELEGRAM_CHAT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID;
 
-  // មុខងារហៅ AI សកល (ប្រើ gemini-3.7-flash ចុងក្រោយ)
+  // មុខងារហៅ AI សកល (ប្រើប្រាស់ gemini-3.6-flash តាមការកំណត់របស់អ្នក)
   const handleAIAction = async (serviceName, customPrompt) => {
     if (!topic.trim()) {
       alert('សូមបញ្ចូលប្រធានបទស្រាវជ្រាវ!');
@@ -31,7 +31,7 @@ export default function Home() {
     setOutput(`🤖 ប្រព័ន្ធ AI កំពុងរៀបចំ "${serviceName}" ជាភាសាខ្មែរ...`);
 
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent?key=${GEMINI_API_KEY}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: [{ parts: [{ text: customPrompt }] }] })
