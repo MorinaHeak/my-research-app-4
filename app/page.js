@@ -15,7 +15,7 @@ export default function Home() {
   const TELEGRAM_BOT_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
   const TELEGRAM_CHAT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID;
 
-  // មុខងារហៅ AI សកល (ប្រើប្រាស់ gemini-3.6-flash តាមការកំណត់របស់អ្នក)
+  // មុខងារហៅ AI សកល (ប្រើប្រាស់ gemini-3.6-flash)
   const handleAIAction = async (serviceName, customPrompt) => {
     if (!topic.trim()) {
       alert('សូមបញ្ចូលប្រធានបទស្រាវជ្រាវ!');
@@ -87,6 +87,26 @@ export default function Home() {
   const copyOutput = () => {
     navigator.clipboard.writeText(output);
     alert('បានចម្លងគ្រោងស្រាវជ្រាវរួចរាល់!');
+  };
+
+  // មុខងារទាញយកជាឯកសារ Word (.doc) ពិតប្រាកដ
+  const downloadWord = () => {
+    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Research Proposal</title></head><body>";
+    const footer = "</body></html>";
+    const sourceHTML = header + `<div style="font-family:'Khmer OS Battambang', 'sans-serif'; font-size:14pt;">${output.replace(/\n/g, '<br>')}</div>` + footer;
+    
+    const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+    const fileDownload = document.createElement("a");
+    document.body.appendChild(fileDownload);
+    fileDownload.href = source;
+    fileDownload.download = `Research_Proposal_${topic ? topic.substring(0, 20) : 'Document'}.doc`;
+    fileDownload.click();
+    document.body.removeChild(fileDownload);
+  };
+
+  // មុខងារទាញយកជា PDF ពិតប្រាកដ (ប្រើ Print to PDF)
+  const downloadPDF = () => {
+    window.print();
   };
 
   return (
@@ -213,10 +233,10 @@ export default function Home() {
               <button onClick={copyOutput} style={{ backgroundColor: '#f1f5f9', border: '1px solid #cbd5e1', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold' }}>
                 📋 ចម្លង
               </button>
-              <button onClick={() => alert('មុខងារទាញយក PDF')} style={{ backgroundColor: '#dc2626', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold' }}>
+              <button onClick={downloadPDF} style={{ backgroundColor: '#dc2626', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold' }}>
                 📥 ទាញយក PDF
               </button>
-              <button onClick={() => alert('មុខងារទាញយក Word')} style={{ backgroundColor: '#2563eb', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold' }}>
+              <button onClick={downloadWord} style={{ backgroundColor: '#2563eb', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold' }}>
                 📥 ទាញយក Word
               </button>
             </div>
