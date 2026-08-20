@@ -15,7 +15,8 @@ export default function Home() {
   const TELEGRAM_BOT_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
   const TELEGRAM_CHAT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID;
 
-  const generateProposal = async () => {
+  // មុខងារហៅ AI សកល (ប្រើ gemini-3.7-flash ចុងក្រោយ)
+  const handleAIAction = async (serviceName, customPrompt) => {
     if (!topic.trim()) {
       alert('សូមបញ្ចូលប្រធានបទស្រាវជ្រាវ!');
       return;
@@ -27,22 +28,13 @@ export default function Home() {
     }
 
     setLoading(true);
-    setOutput('🤖 ប្រព័ន្ធ AI កំពុងរៀបចំ និងសរសេរគ្រោងការស្រាវជ្រាវជាភាសាខ្មែរ...');
+    setOutput(`🤖 ប្រព័ន្ធ AI កំពុងរៀបចំ "${serviceName}" ជាភាសាខ្មែរ...`);
 
     try {
-      const prompt = `ចូលតួជាអ្នកជំនាញស្រាវជ្រាវ។ សូមរៀបចំគ្រោងការស្រាវជ្រាវ (Research Proposal) ផ្លូវការជាភាសាខ្មែរ លើប្រធានបទ៖ "${topic}" ក្នុងវិស័យ "${field}"។ 
-      គ្រោងការត្រូវមានចំណុចសំខាន់ៗដូចជា៖
-      1. ចំណងជើងស្រាវជ្រាវ
-      2. ផ្ទាំងទស្សនីយភាព និងបញ្ហាស្រាវជ្រាវ (Background & Statement of the Problem)
-      3. បំណងនៃការសិក្សា (Research Objectives)
-      4. សំណួរស្រាវជ្រាវ (Research Questions)
-      5. វិធីសាស្ត្រស្រាវជ្រាវ (Research Methodology)`;
-
-      // ប្រើម៉ូដែល gemini-3.6-flash ដែលមានស្ថេរភាពពេញលេញ និងដំណើរការរលូន
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent?key=${GEMINI_API_KEY}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        body: JSON.stringify({ contents: [{ parts: [{ text: customPrompt }] }] })
       });
 
       const data = await response.json();
@@ -55,6 +47,18 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const generateProposal = () => {
+    const prompt = `ចូលតួជាអ្នកជំនាញស្រាវជ្រាវ។ សូមរៀបចំគ្រោងការស្រាវជ្រាវ (Research Proposal) ផ្លូវការជាភាសាខ្មែរ លើប្រធានបទ៖ "${topic}" ក្នុងវិស័យ "${field}"។ 
+    គ្រោងការត្រូវមានចំណុចសំខាន់ៗដូចជា៖
+    1. ចំណងជើងស្រាវជ្រាវ
+    2. ផ្ទាំងទស្សនីយភាព និងបញ្ហាស្រាវជ្រាវ (Background & Statement of the Problem)
+    3. បំណងនៃការសិក្សា (Research Objectives)
+    4. សំណួរស្រាវជ្រាវ (Research Questions)
+    5. វិធីសាស្ត្រស្រាវជ្រាវ (Research Methodology)`;
+    
+    handleAIAction('គ្រោងការស្រាវជ្រាវសង្ខេប', prompt);
   };
 
   const submitPayment = async () => {
@@ -149,14 +153,54 @@ export default function Home() {
 
           {/* Advanced Services Card */}
           <section style={{ backgroundColor: '#1e1b4b', color: '#ffffff', padding: '20px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-            <h3 style={{ fontSize: '15px', fontWeight: 'bold', margin: '0 0 8px 0' }}>🚀 មុខងារនឿយលឿន (Advanced AI Services)</h3>
+            <h3 style={{ fontSize: '15px', fontWeight: 'bold', margin: '0 0 8px 0', color: '#facc15' }}>🚀 មុខងារជឿនលឿន (Advanced AI Services)</h3>
             <p style={{ fontSize: '12px', color: '#cbd5e1', margin: '0 0 16px 0' }}>បង្កើតទម្រង់លម្អិតផ្សេងៗទៀតដោយស្វ័យប្រវត្តិ។</p>
-            <div style={{ backgroundColor: '#312e81', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 'bold' }}>📄 សំណើរកាគ្រោងការពេញលេញ (Full Proposal)</div>
-                <div style={{ fontSize: '11px', color: '#93c5fd' }}>រៀបចំទម្រង់ ធំដុំ (Format ផ្លូវការ)</div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {/* Service 1 */}
+              <div 
+                onClick={() => handleAIAction(
+                  'សំណើរកាគ្រោងការពេញលេញ',
+                  `ចូលតួជាអ្នកជំនាញស្រាវជ្រាវ។ សូមរៀបចំគ្រោងការស្រាវជ្រាវពេញលេញ (Full Formal Proposal) តាម Format ផ្លូវការ ជាភាសាខ្មែរ លើប្រធានបទ៖ "${topic}" ក្នុងវិស័យ "${field}"។`
+                )}
+                style={{ backgroundColor: '#312e81', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', border: '1px solid #4f46e5' }}
+              >
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 'bold' }}>📄 សំណើរកាគ្រោងការពេញលេញ</div>
+                  <div style={{ fontSize: '11px', color: '#93c5fd' }}>រៀបចំទម្រង់ ធំដុំ (Format ផ្លូវការ)</div>
+                </div>
+                <span style={{ backgroundColor: '#facc15', color: '#713f12', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}>3 Credits</span>
               </div>
-              <span style={{ backgroundColor: '#facc15', color: '#713f12', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}>3 Credits</span>
+
+              {/* Service 2 */}
+              <div 
+                onClick={() => handleAIAction(
+                  'បង្កើតកម្រងសំណួរ',
+                  `ចូលតួជាអ្នកជំនាញស្រាវជ្រាវ។ សូមបង្កើតកម្រងសំណួរ (Questionnaire) លម្អិតជាភាសាខ្មែរ លើប្រធានបទ៖ "${topic}" ក្នុងវិស័យ "${field}" ស្របតាមក្រុមគោលដៅ។`
+                )}
+                style={{ backgroundColor: '#312e81', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', border: '1px solid #4f46e5' }}
+              >
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 'bold' }}>📋 បង្កើតកម្រងសំណួរ (Questionnaire)</div>
+                  <div style={{ fontSize: '11px', color: '#93c5fd' }}>តម្រូវតាមប្រភេទអ្នកឆ្លើយតបគោលដៅ</div>
+                </div>
+                <span style={{ backgroundColor: '#facc15', color: '#713f12', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}>2 Credits</span>
+              </div>
+
+              {/* Service 3 */}
+              <div 
+                onClick={() => handleAIAction(
+                  'វិភាគទិន្នន័យ',
+                  `ចូលតួជាអ្នកជំនាញវិភាគទិន្នន័យស្រាវជ្រាវ។ សូមរៀបចំផែនការវិភាគទិន្នន័យ (Data Analysis) និងគំរូនៃការបកស្រាយលទ្ធផល ជាភាសាខ្មែរ សម្រាប់ប្រធានបទ៖ "${topic}" ក្នុងវិស័យ "${field}"។`
+                )}
+                style={{ backgroundColor: '#312e81', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', border: '1px solid #4f46e5' }}
+              >
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 'bold' }}>📊 វិភាគទិន្នន័យ (Data Analysis)</div>
+                  <div style={{ fontSize: '11px', color: '#93c5fd' }}>បកស្រាយទិន្នន័យ និងធ្វើរបាយការណ៍</div>
+                </div>
+                <span style={{ backgroundColor: '#facc15', color: '#713f12', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}>5 Credits</span>
+              </div>
             </div>
           </section>
         </div>
