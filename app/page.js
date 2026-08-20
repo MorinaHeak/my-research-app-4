@@ -38,8 +38,8 @@ export default function Home() {
       4. សំណួរស្រាវជ្រាវ (Research Questions)
       5. វិធីសាស្ត្រស្រាវជ្រាវ (Research Methodology)`;
 
-      // កែសម្រួល Endpoint មកប្រើ gemini-2.5-flash
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+      // ប្រើម៉ូដែល gemini-3.6-flash ដែលមានស្ថេរភាពពេញលេញ និងដំណើរការរលូន
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -89,68 +89,95 @@ export default function Home() {
     <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh', fontFamily: 'sans-serif', color: '#1e293b' }}>
       {/* Header */}
       <header style={{ backgroundColor: '#4338ca', color: '#ffffff', padding: '16px 24px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h1 style={{ fontSize: '20px', fontWeight: 'bold', margin: 0 }}>🎓 ជំនួយការសរសេរគ្រោងការស្រាវជ្រាវ</h1>
-          <button 
-            onClick={() => setShowPaymentModal(true)} 
-            style={{ backgroundColor: '#10b981', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
-          >
-            ➕ ទិញក្រេឌីត
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ backgroundColor: '#facc15', color: '#713f12', padding: '4px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 'bold' }}>1 ក្រេឌីត</span>
+            <button 
+              onClick={() => setShowPaymentModal(true)} 
+              style={{ backgroundColor: '#10b981', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}
+            >
+              ➕ ទិញក្រេឌីត
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Main Grid */}
-      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '32px 16px', display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
+      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 16px', display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
         {/* Left Panel */}
-        <section style={{ backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#1e1b4b', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', marginTop: 0 }}>
-            ការកំណត់គ្រោងស្រាវជ្រាវ
-          </h2>
-          
-          <div style={{ marginTop: '16px' }}>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px' }}>ប្រធានបទ ឬគំនិតស្រាវជ្រាវ</label>
-            <textarea
-              rows={5}
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              placeholder="ឧទាហរណ៍៖ ការសិក្សាអំពីផលប៉ះពាល់នៃការប្រែប្រួលអាកាសធាតុ..."
-              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px', boxSizing: 'border-box' }}
-            />
-          </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <section style={{ backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#1e1b4b', margin: 0 }}>ការកំណត់គ្រោងស្រាវជ្រាវ</h2>
+              <span style={{ fontSize: '11px', backgroundColor: '#e0e7ff', color: '#3730a3', padding: '2px 8px', borderRadius: '4px' }}>សាកល្បង 1 Credit</span>
+            </div>
+            
+            <div>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px' }}>ប្រធានបទ ឬគំនិតស្រាវជ្រាវ</label>
+              <textarea
+                rows={5}
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                placeholder="ឧទាហរណ៍៖ ការសិក្សាអំពីផលប៉ះពាល់នៃការប្រែប្រួលអាកាសធាតុ..."
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px', boxSizing: 'border-box' }}
+              />
+            </div>
 
-          <div style={{ marginTop: '16px' }}>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px' }}>ជំនាញ ឬវិស័យសិក្សា</label>
-            <select
-              value={field}
-              onChange={(e) => setField(e.target.value)}
-              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px', boxSizing: 'border-box' }}
+            <div style={{ marginTop: '16px' }}>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px' }}>ជំនាញ ឬវិស័យសិក្សា</label>
+              <select
+                value={field}
+                onChange={(e) => setField(e.target.value)}
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px', boxSizing: 'border-box' }}
+              >
+                <option value="ការងារសង្គម និងវិទ្យាសាស្ត្រសង្គម">ការងារសង្គម និងវិទ្យាសាស្ត្រសង្គម</option>
+                <option value="អប់រំ និងគរុកោសល្យ">អប់រំ និងគរុកោសល្យ</option>
+                <option value="ពាណិជ្ជកម្ម និងសេដ្ឋកិច្ច">ពាណិជ្ជកម្ម និងសេដ្ឋកិច្ច</option>
+                <option value="បច្ចេកវិទ្យាព័ត៌មាន">បច្ចេកវិទ្យាព័ត៌មាន</option>
+              </select>
+            </div>
+
+            <button
+              onClick={generateProposal}
+              disabled={loading}
+              style={{ width: '100%', backgroundColor: '#4f46e5', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 'bold', fontSize: '15px', marginTop: '20px', cursor: 'pointer' }}
             >
-              <option value="ការងារសង្គម និងវិទ្យាសាស្ត្រសង្គម">ការងារសង្គម និងវិទ្យាសាស្ត្រសង្គម</option>
-              <option value="អប់រំ និងគរុកោសល្យ">អប់រំ និងគរុកោសល្យ</option>
-              <option value="ពាណិជ្ជកម្ម និងសេដ្ឋកិច្ច">ពាណិជ្ជកម្ម និងសេដ្ឋកិច្ច</option>
-              <option value="បច្ចេកវិទ្យាព័ត៌មាន">បច្ចេកវិទ្យាព័ត៌មាន</option>
-            </select>
-          </div>
+              {loading ? '⏳ កំពុងបង្កើត...' : '✨ បង្កើតគ្រោងការស្រាវជ្រាវ (1 Credit)'}
+            </button>
+          </section>
 
-          <button
-            onClick={generateProposal}
-            disabled={loading}
-            style={{ width: '100%', backgroundColor: '#4f46e5', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 'bold', fontSize: '15px', marginTop: '20px', cursor: 'pointer' }}
-          >
-            {loading ? '⏳ កំពុងបង្កើត...' : '✨ បង្កើតគ្រោងការស្រាវជ្រាវ'}
-          </button>
-        </section>
+          {/* Advanced Services Card */}
+          <section style={{ backgroundColor: '#1e1b4b', color: '#ffffff', padding: '20px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 'bold', margin: '0 0 8px 0' }}>🚀 មុខងារនឿយលឿន (Advanced AI Services)</h3>
+            <p style={{ fontSize: '12px', color: '#cbd5e1', margin: '0 0 16px 0' }}>បង្កើតទម្រង់លម្អិតផ្សេងៗទៀតដោយស្វ័យប្រវត្តិ។</p>
+            <div style={{ backgroundColor: '#312e81', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 'bold' }}>📄 សំណើរកាគ្រោងការពេញលេញ (Full Proposal)</div>
+                <div style={{ fontSize: '11px', color: '#93c5fd' }}>រៀបចំទម្រង់ ធំដុំ (Format ផ្លូវការ)</div>
+              </div>
+              <span style={{ backgroundColor: '#facc15', color: '#713f12', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}>3 Credits</span>
+            </div>
+          </section>
+        </div>
 
         {/* Output Panel */}
-        <section style={{ backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', marginBottom: '16px' }}>
+        <section style={{ backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
             <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#1e1b4b', margin: 0 }}>សេចក្តីព្រាងគ្រោងការស្រាវជ្រាវ</h2>
-            <button onClick={copyOutput} style={{ backgroundColor: '#f1f5f9', border: '1px solid #cbd5e1', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' }}>
-              📋 ចម្លង
-            </button>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button onClick={copyOutput} style={{ backgroundColor: '#f1f5f9', border: '1px solid #cbd5e1', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold' }}>
+                📋 ចម្លង
+              </button>
+              <button onClick={() => alert('មុខងារទាញយក PDF')} style={{ backgroundColor: '#dc2626', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold' }}>
+                📥 ទាញយក PDF
+              </button>
+              <button onClick={() => alert('មុខងារទាញយក Word')} style={{ backgroundColor: '#2563eb', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', fontWeight: 'bold' }}>
+                📥 ទាញយក Word
+              </button>
+            </div>
           </div>
-          <div style={{ fontSize: '14px', lineHeight: '1.6', whiteSpace: 'pre-wrap', minHeight: '400px', border: '1px dashed #cbd5e1', padding: '16px', borderRadius: '8px', backgroundColor: '#f8fafc' }}>
+          <div style={{ fontSize: '14px', lineHeight: '1.6', whiteSpace: 'pre-wrap', flexGrow: 1, minHeight: '450px', border: '1px dashed #cbd5e1', padding: '16px', borderRadius: '8px', backgroundColor: '#f8fafc' }}>
             {output}
           </div>
         </section>
