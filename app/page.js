@@ -11,6 +11,13 @@ export default function Home() {
   const [txId, setTxId] = useState('');
   const [isSubmittingPay, setIsSubmittingPay] = useState(false);
 
+  // States សម្រាប់មុខងារស្នើសុំអ្នកជំនាញ (Expert Review Modal)
+  const [showExpertModal, setShowExpertModal] = useState(false);
+  const [clientName, setClientName] = useState('');
+  const [clientContact, setClientContact] = useState('');
+  const [clientNote, setClientNote] = useState('');
+  const [isSubmittingExpert, setIsSubmittingExpert] = useState(false);
+
   const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
   const TELEGRAM_BOT_TOKEN = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
   const TELEGRAM_CHAT_ID = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID;
@@ -84,12 +91,40 @@ export default function Home() {
     }
   };
 
+  // មុខងារបញ្ជូនសំណើសុំអ្នកជំនាញទៅ Telegram
+  const submitExpertRequest = async () => {
+    if (!clientName.trim() || !clientContact.trim()) {
+      alert('សូមបំពេញឈ្មោះ និងលេខទំនាក់ទំនងរបស់អ្នក!');
+      return;
+    }
+
+    setIsSubmittingExpert(true);
+    try {
+      const message = `👨‍🏫 *មានសំណើសុំសេវាពិនិត្យពីអ្នកជំនាញ (Expert Review Request)*\n\n👤 *ឈ្មោះអតិថិជន*: ${clientName}\n📞 *ទំនាក់ទំនង*: ${clientContact}\n📚 *ប្រធានបទ*: ${topic || 'មិនបានระบุ'}\n📝 *ចំណាំ/សំណូមពរ*: ${clientNote || 'គ្មាន'}`;
+
+      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'Markdown' })
+      });
+
+      alert('សំណើរបស់អ្នកត្រូវបានបញ្ជូនទៅកាន់អ្នកជំនាញជោគជ័យ! យើងនឹងទាក់ទងអ្នកវិញឆាប់ៗ។');
+      setClientName('');
+      setClientContact('');
+      setClientNote('');
+      setShowExpertModal(false);
+    } catch (err) {
+      alert('កំហុសក្នុងការផ្ញើសំណើ៖ ' + err.message);
+    } finally {
+      setIsSubmittingExpert(false);
+    }
+  };
+
   const copyOutput = () => {
     navigator.clipboard.writeText(output);
     alert('បានចម្លងគ្រោងស្រាវជ្រាវរួចរាល់!');
   };
 
-  // មុខងារទាញយកជាឯកសារ Word (.doc) ពិតប្រាកដ
   const downloadWord = () => {
     const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Research Proposal</title></head><body>";
     const footer = "</body></html>";
@@ -104,7 +139,6 @@ export default function Home() {
     document.body.removeChild(fileDownload);
   };
 
-  // មុខងារទាញយកជា PDF ពិតប្រាកដ (ប្រើ Print to PDF)
   const downloadPDF = () => {
     window.print();
   };
@@ -173,8 +207,8 @@ export default function Home() {
 
           {/* Advanced Services Card */}
           <section style={{ backgroundColor: '#1e1b4b', color: '#ffffff', padding: '20px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-            <h3 style={{ fontSize: '15px', fontWeight: 'bold', margin: '0 0 8px 0', color: '#facc15' }}>🚀 មុខងារជឿនលឿន (Advanced AI Services)</h3>
-            <p style={{ fontSize: '12px', color: '#cbd5e1', margin: '0 0 16px 0' }}>បង្កើតទម្រង់លម្អិតផ្សេងៗទៀតដោយស្វ័យប្រវត្តិ។</p>
+            <h3 style={{ fontSize: '15px', fontWeight: 'bold', margin: '0 0 8px 0', color: '#facc15' }}>🚀 មុខងារជឿនលឿន & សេវាបន្ថែម</h3>
+            <p style={{ fontSize: '12px', color: '#cbd5e1', margin: '0 0 16px 0' }}>ជ្រើសរើសសេវាកម្មជំនួយបន្ថែមពី AI និងអ្នកជំនាញ។</p>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {/* Service 1 */}
@@ -221,6 +255,18 @@ export default function Home() {
                 </div>
                 <span style={{ backgroundColor: '#facc15', color: '#713f12', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}>5 Credits</span>
               </div>
+
+              {/* Service 4: Expert Human Review (NEW) */}
+              <div 
+                onClick={() => setShowExpertModal(true)}
+                style={{ backgroundColor: '#065f46', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', border: '1px solid #10b981', marginTop: '4px' }}
+              >
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#fef08a' }}>👨‍🏫 ស្នើសុំអ្នកជំនាញពិនិត្យផ្ទាល់</div>
+                  <div style={{ fontSize: '11px', color: '#a7f3d0' }}>ពិនិត្យ និងកែសម្រួលដោយមនុស្សពិត</div>
+                </div>
+                <span style={{ backgroundColor: '#10b981', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}>VIP Service</span>
+              </div>
             </div>
           </section>
         </div>
@@ -247,7 +293,7 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Modal */}
+      {/* Payment Modal */}
       {showPaymentModal && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 50 }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '400px', width: '100%', padding: '24px', position: 'relative' }}>
@@ -271,6 +317,58 @@ export default function Home() {
               style={{ width: '100%', backgroundColor: '#4f46e5', color: '#fff', border: 'none', padding: '10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
             >
               {isSubmittingPay ? '⏳ កំពុងផ្ញើ...' : 'បញ្ជូនការទូទាត់ (Submit)'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Expert Review Request Modal (NEW) */}
+      {showExpertModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px', zIndex: 50 }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '16px', maxWidth: '420px', width: '100%', padding: '24px', position: 'relative' }}>
+            <button onClick={() => setShowExpertModal(false)} style={{ position: 'absolute', top: '16px', right: '16px', border: 'none', background: 'none', fontSize: '20px', cursor: 'pointer' }}>&times;</button>
+            <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginTop: 0, color: '#065f46' }}>👨‍🏫 ស្នើសុំអ្នកជំនាញពិនិត្យ និងកែសម្រួល</h3>
+            <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '16px' }}>បំពេញព័ត៌មានរបស់អ្នក ក្រុមការងារយើងខ្ញុំនឹងទាក់ទងត្រឡប់ទៅវិញដើម្បីពិភាក្សាលម្អិត។</p>
+            
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '4px' }}>ឈ្មោះរបស់អ្នក</label>
+              <input
+                type="text"
+                value={clientName}
+                onChange={(e) => setClientName(e.target.value)}
+                placeholder="ឧទាហរណ៍៖ សុខ រ៉ា"
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '4px' }}>លេខទូរស័ព្ទ ឬ Telegram ទំនាក់ទំនង</label>
+              <input
+                type="text"
+                value={clientContact}
+                onChange={(e) => setClientContact(e.target.value)}
+                placeholder="ឧទាហរណ៍៖ 012 345 678 (Telegram)"
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', marginBottom: '4px' }}>សំណូមពរ ឬកំណត់ចំណាំបន្ថែម</label>
+              <textarea
+                rows={3}
+                value={clientNote}
+                onChange={(e) => setClientNote(e.target.value)}
+                placeholder="ចង់ឱ្យជួយពិនិត្យលើផ្នែកណាខ្លះ..."
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '14px', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            <button
+              onClick={submitExpertRequest}
+              disabled={isSubmittingExpert}
+              style={{ width: '100%', backgroundColor: '#059669', color: '#fff', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '15px' }}
+            >
+              {isSubmittingExpert ? '⏳ កំពុងផ្ញើ...' : '📩 បញ្ជូនសំណើទៅអ្នកជំនាញ'}
             </button>
           </div>
         </div>
