@@ -1,8 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  }, []);
+
   const [topic, setTopic] = useState('');
   const [field, setField] = useState('ការងារសង្គម និងវិទ្យាសាស្ត្រសង្គម');
   const [output, setOutput] = useState('សូមបញ្ចូលប្រធានបទស្រាវជ្រាវ រួចចុចប៊ូតុងខាងឆ្វេង ដើម្បីបង្កើតគ្រោងការស្រាវជ្រាវជាភាសាខ្មែរ (ទទួលបាន Free 1 Credit សម្រាប់ការសាកល្បង)។');
