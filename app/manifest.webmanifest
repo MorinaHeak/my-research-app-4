@@ -1,0 +1,12 @@
+{
+  "background_color": "#f8fafc",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Research Proposal Assistant",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Research App",
+  "start_url": "/",
+  "theme_color": "#4338ca",
+  "description": "កម្មវិធីជំនួយការរៀបចំគ្រោងការស្រាវជ្រាវ កម្រងសំណួរ និងការវិភាគទិន្នន័យជាភាសាខ្មែរ ដោយប្រើប្រាស់បច្ចេកវិទ្យា AI និងមានការពិនិត្យពីអ្នកជំនាញ។"
+}
